@@ -4,17 +4,18 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 
 module.exports = {
   context: path.resolve(__dirname, './app'),
-  entry: {
-    app: './index.jsx',
-  },
+  entry: ['babel-regenerator-runtime', './index.jsx'],
+  // entry: './index.jsx',
   output: {
-    filename: '[name].bundle.js',
+    filename: 'bundle.js',
     path: path.resolve(__dirname, './dist'),
     // path: path.resolve(__dirname, './dist/assets'),
     // publicPath: '/assets'
   },
+  devtool: 'eval',
   devServer: {
-    contentBase: path.resolve(__dirname, './dist')
+    contentBase: path.resolve(__dirname, './dist'),
+    historyApiFallback: true,
   },
 
   module: {
@@ -44,10 +45,17 @@ module.exports = {
         exclude: [/node_modules/],
         use: [{
           loader: 'babel-loader',
-          options: { 
+          options: {
             presets: ['es2015', 'stage-0', 'react'],
-            plugins: ['transform-decorators-legacy', 'transform-class-properties']
-           }
+            plugins: [
+              'transform-decorators-legacy', 
+              'transform-class-properties',
+              // ["transform-runtime", {
+              //   "polyfill": false,
+              //   "regenerator": true
+              // }]
+            ]
+          }
         }],
       },
 
@@ -55,11 +63,14 @@ module.exports = {
   },
 
   plugins: [
-    new HtmlWebpackPlugin({ 
-      title: 'Test for react and webpack 2',
+    new HtmlWebpackPlugin({
+      title: 'React and Mobx boilerplate',
       template: 'index.ejs'
     })
-  ]
+  ],
 
+  resolve: {
+    extensions: ['.js', '.jsx', '.json']
+  }
 
 };

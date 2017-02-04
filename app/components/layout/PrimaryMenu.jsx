@@ -1,51 +1,57 @@
 import React, { Component } from 'react'
-import { Menu } from 'semantic-ui-react'
 import { Link } from 'react-router-dom'
+import { inject, observer } from 'mobx-react'
 
+@inject('appStore', 'fireStore') @observer
 export default class PrimaryMenu extends Component {
-  state = { activeItem: 'message' }
+  state = { activeItem: 'todos' }
 
   handleItemClick = (e) => {
     // e.preventDefault();
     this.setState({ activeItem: e.target.name })
   }
 
-  componentDidMount () {
+  componentDidMount() {
     $('.ui.dropdown').dropdown()
   }
 
-  componentWillUnmount () {
-     $('.ui.dropdown').dropdown()
+  componentWillUnmount() {
+    $('.ui.dropdown').dropdown()
   }
-  
+
+  itemClass = (item) => {
+    return 'item ' + (this.state.activeItem === item ? 'active' : '');
+  }
 
   render() {
     const { activeItem } = this.state
 
     return (
-      <div className="ui inverted stackable menu">
+      <div className="primary-menu ui inverted stackable menu" style={styles.primaryMenu}>
         <div className="ui container">
-          <Link to="/" className={'item ' + (activeItem === 'home' ? 'active' : '')} name="home" onClick={this.handleItemClick}>
+          <div className="header item">
+            Reactplate
+          </div>
+          <Link to="/" className={this.itemClass('home')} name="home" onClick={this.handleItemClick}>
             Home
           </Link>
-          <Link to="/test" className={'item ' + (activeItem === 'message' ? 'active' : '')} name="message" onClick={this.handleItemClick}>
-            Messages
+          <Link to="/todos" className={this.itemClass('todos')} name="todos" onClick={this.handleItemClick}>
+            Todos
           </Link>
-          <div className="right menu">
-            <div className="ui dropdown item">
-              Language <i className="dropdown icon"></i>
-              <div className="menu">
-                <a className="item">English</a>
-                <a className="item">Russian</a>
-                <a className="item">Spanish</a>
-              </div>
-            </div>
-            <div className="item">
-              <div className="ui primary button">Sign Up</div>
-            </div>
+          <div className="right item">
+            <div className="primary button">Sign In</div>
+          </div>
+          <div className="item">
+            <div className="primary button">Sign Up</div>
           </div>
         </div>
       </div>
     )
+  }
+}
+
+const styles = {
+  primaryMenu: {
+    borderRadius: 0
   }
 }

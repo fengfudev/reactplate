@@ -1,7 +1,7 @@
 import { observable, action } from 'mobx'
 import axios from 'axios'
 
-class AppState {
+class AppStore {
   @observable authenticated
   @observable authenticating
   @observable items
@@ -46,4 +46,4 @@ class AppState {
   
 }
 
-export default new AppState;
+export default new AppStore;

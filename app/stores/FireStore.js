@@ -8,7 +8,7 @@ let db = app.database()
 let auth = app.auth()
 let baseRef = 'demo/'
 
-let todos = db.ref(baseRef + 'todo')
+let todosRef = db.ref(baseRef + 'todo')
 
 function snapshotToArray(snapshot) {
   var result = [];
@@ -25,7 +25,7 @@ class FireStore {
   @observable authUser = null
 
   constructor() {
-    todos.on('value', (snapshot) => {
+    todosRef.on('value', (snapshot) => {
       this.todos = snapshotToArray(snapshot)
     });
 
@@ -42,18 +42,31 @@ class FireStore {
     this.todos = todos
   }
 
-  add(name) {
-    const id = todos.push().key
-    this.update(id, name)
-  };
+  @action toggleFinished(todo) {
+    return todosRef.child(todo._id).update({ finished: !todo.finished })
+  }
 
-  update(id, name) {
-    todos.update({ [id]: { name } })
-  };
+  @action remove(todo) {
+    return todosRef.child(todo._id).remove()
+  }
 
-  del(id) {
-    todos.child(id).remove()
-  };
+  @action create(title, description, dueDate) {
+    return todosRef.push({
+      title,
+      description,
+      dueAt: dueDate ? new Date(dueDate).getTime() : null,
+      createdAt: new Date().getTime(),
+      finished: false
+    });
+  }
+
+  @action update(todo) {
+    return todosRef.child(todo._id).update({
+      title: todo.title,
+      description: todo.description,
+      dueAt: (new Date(this.dueAt.time)).getTime()
+    })
+  }
 
 }
 
